@@ -1,0 +1,60 @@
+name: ci
+
+on: [push, pull_request]
+
+jobs:
+  rust:
+    name: markdown_records-${{ matrix.os }}
+    if: |
+      github.event_name == 'push' ||
+      !startsWith(github.event.pull_request.head.label, 'kitsonk:')
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        os: [macOS-latest, ubuntu-20.04-xl, windows-2019]
+
+    env:
+      CARGO_INCREMENTAL: 0
+      GH_ACTIONS: 1
+      RUST_BACKTRACE: full
+      RUSTFLAGS: -D warnings
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v1
+
+      - name: ➡️  install Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: 1.x
+
+      - name: Format
+        if: contains(matrix.os, 'ubuntu')
+        run: |
+          cargo fmt -- --check
+          deno fmt --check *.ts *.md deno.json
+
+      - name: Lint
+        run: |
+          cargo clippy --all-targets --all-features --release --locked -- -D clippy::all
+          deno lint *.ts lib
+
+      - name: Build
+        run: cargo build --locked --release --all-targets --all-features
+
+      - name: Test
+        run: |
+          cargo test --locked --release --all-targets --all-features
+          deno task test
+
+      - name: Ensure Wasm up to date
+        if: contains(matrix.os, 'ubuntu')
+        run: deno task build --check
