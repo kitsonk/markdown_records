@@ -57,20 +57,9 @@ Deno.test({
           '/**\n * With a code example inline\n */\n\nimport * as lib from "https://example.com/lib.ts";\n\nconsole.log(lib);\n',
       },
       {
-        "kind": "paragraph",
-        "position": 6,
-        "hierarchy": [
-          "An Example Markdown File",
-          "A Heading at Level 2",
-        ],
-        "anchor": "a-heading-at-level-2",
-        "content":
-          "As well as another example here, which just uses indentation:",
-      },
-      {
         "kind": "code",
         "codeInfo": "",
-        "position": 7,
+        "position": 6,
         "hierarchy": [
           "An Example Markdown File",
           "A Heading at Level 2",
@@ -80,7 +69,7 @@ Deno.test({
       },
       {
         "kind": "heading",
-        "position": 8,
+        "position": 7,
         "hierarchy": [
           "An Example Markdown File",
         ],
@@ -89,7 +78,7 @@ Deno.test({
       },
       {
         "kind": "paragraph",
-        "position": 9,
+        "position": 8,
         "hierarchy": [
           "An Example Markdown File",
           "Another Level 2 heading",
@@ -99,7 +88,7 @@ Deno.test({
       },
       {
         "kind": "heading",
-        "position": 10,
+        "position": 9,
         "hierarchy": [
           "An Example Markdown File",
           "Another Level 2 heading",
@@ -109,7 +98,7 @@ Deno.test({
       },
       {
         "kind": "heading",
-        "position": 11,
+        "position": 10,
         "hierarchy": [
           "An Example Markdown File",
           "Another Level 2 heading",
@@ -120,7 +109,7 @@ Deno.test({
       },
       {
         "kind": "paragraph",
-        "position": 12,
+        "position": 11,
         "hierarchy": [
           "An Example Markdown File",
           "Another Level 2 heading",
@@ -132,7 +121,7 @@ Deno.test({
       },
       {
         "kind": "heading",
-        "position": 13,
+        "position": 12,
         "hierarchy": [
           "An Example Markdown File",
           "Another Level 2 heading",
@@ -142,7 +131,7 @@ Deno.test({
       },
       {
         "kind": "paragraph",
-        "position": 14,
+        "position": 13,
         "hierarchy": [
           "An Example Markdown File",
           "Another Level 2 heading",
@@ -154,7 +143,7 @@ Deno.test({
       {
         "kind": "code",
         "codeInfo": "json",
-        "position": 15,
+        "position": 14,
         "hierarchy": [
           "An Example Markdown File",
           "Another Level 2 heading",
@@ -165,7 +154,7 @@ Deno.test({
       },
       {
         "kind": "heading",
-        "position": 16,
+        "position": 15,
         "hierarchy": [
           "An Example Markdown File",
         ],
@@ -174,7 +163,7 @@ Deno.test({
       },
       {
         "kind": "paragraph",
-        "position": 17,
+        "position": 16,
         "hierarchy": [
           "An Example Markdown File",
           "And finally level 2",

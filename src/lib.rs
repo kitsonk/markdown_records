@@ -40,6 +40,7 @@ struct State {
   anchor: Option<String>,
   depth: u32,
   position: u32,
+  collect: bool,
   stack: Vec<String>,
 }
 
@@ -116,7 +117,10 @@ fn parse(markdown: &str) -> Vec<MarkdownRecord> {
   };
   let root = parse_document(&arena, markdown, &options);
   let records = RefCell::new(Vec::new());
-  let state = RefCell::new(State::default());
+  let state = RefCell::new(State {
+    collect: true,
+    ..Default::default()
+  });
   for child in root.children() {
     match &child.data.borrow().value {
       NodeValue::Heading(heading) => {
@@ -126,12 +130,16 @@ fn parse(markdown: &str) -> Vec<MarkdownRecord> {
         }
         state.depth = heading.level;
         state.position += 1;
+        state.collect = true;
         parse_header(state, records.borrow_mut(), child)
       }
       NodeValue::Paragraph => {
         let mut state = state.borrow_mut();
-        state.position += 1;
-        parse_paragraph(state, records.borrow_mut(), child);
+        if state.collect {
+          state.collect = false;
+          state.position += 1;
+          parse_paragraph(state, records.borrow_mut(), child);
+        }
       }
       NodeValue::CodeBlock(code_block) => {
         let info = String::from_utf8(code_block.info.clone()).unwrap();
@@ -217,19 +225,9 @@ mod tests {
           "content": "/**\n * With a code example inline\n */\n\nimport * as lib from \"https://example.com/lib.ts\";\n\nconsole.log(lib);\n"
         },
         {
-          "kind": "paragraph",
-          "position": 6,
-          "hierarchy": [
-            "An Example Markdown File",
-            "A Heading at Level 2"
-          ],
-          "anchor": "a-heading-at-level-2",
-          "content": "As well as another example here, which just uses indentation:"
-        },
-        {
           "kind": "code",
           "codeInfo": "",
-          "position": 7,
+          "position": 6,
           "hierarchy": [
             "An Example Markdown File",
             "A Heading at Level 2"
@@ -239,7 +237,7 @@ mod tests {
         },
         {
           "kind": "heading",
-          "position": 8,
+          "position": 7,
           "hierarchy": [
             "An Example Markdown File"
           ],
@@ -248,7 +246,7 @@ mod tests {
         },
         {
           "kind": "paragraph",
-          "position": 9,
+          "position": 8,
           "hierarchy": [
             "An Example Markdown File",
             "Another Level 2 heading"
@@ -258,7 +256,7 @@ mod tests {
         },
         {
           "kind": "heading",
-          "position": 10,
+          "position": 9,
           "hierarchy": [
             "An Example Markdown File",
             "Another Level 2 heading"
@@ -268,7 +266,7 @@ mod tests {
         },
         {
           "kind": "heading",
-          "position": 11,
+          "position": 10,
           "hierarchy": [
             "An Example Markdown File",
             "Another Level 2 heading",
@@ -279,7 +277,7 @@ mod tests {
         },
         {
           "kind": "paragraph",
-          "position": 12,
+          "position": 11,
           "hierarchy": [
             "An Example Markdown File",
             "Another Level 2 heading",
@@ -291,7 +289,7 @@ mod tests {
         },
         {
           "kind": "heading",
-          "position": 13,
+          "position": 12,
           "hierarchy": [
             "An Example Markdown File",
             "Another Level 2 heading"
@@ -301,7 +299,7 @@ mod tests {
         },
         {
           "kind": "paragraph",
-          "position": 14,
+          "position": 13,
           "hierarchy": [
             "An Example Markdown File",
             "Another Level 2 heading",
@@ -313,7 +311,7 @@ mod tests {
         {
           "kind": "code",
           "codeInfo": "json",
-          "position": 15,
+          "position": 14,
           "hierarchy": [
             "An Example Markdown File",
             "Another Level 2 heading",
@@ -324,7 +322,7 @@ mod tests {
         },
         {
           "kind": "heading",
-          "position": 16,
+          "position": 15,
           "hierarchy": [
             "An Example Markdown File"
           ],
@@ -333,7 +331,7 @@ mod tests {
         },
         {
           "kind": "paragraph",
-          "position": 17,
+          "position": 16,
           "hierarchy": [
             "An Example Markdown File",
             "And finally level 2"
