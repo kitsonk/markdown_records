@@ -22,7 +22,7 @@ Deno.test({
           "An Example Markdown File",
         ],
         "anchor": "an-example-markdown-file",
-        "content": "With some content here.",
+        "content": "With some content here, including some  inline  code.",
       },
       {
         "kind": "heading",
@@ -104,8 +104,8 @@ Deno.test({
           "An Example Markdown File",
           "Another Level 2 heading",
         ],
-        "anchor": "a-level-3-heading-with-some-",
-        "content": "A Level 3 heading with some ",
+        "anchor": "a-level-3-heading-with-some--backticks",
+        "content": "A Level 3 heading with some  backticks",
       },
       {
         "kind": "heading",
@@ -113,7 +113,7 @@ Deno.test({
         "hierarchy": [
           "An Example Markdown File",
           "Another Level 2 heading",
-          "A Level 3 heading with some ",
+          "A Level 3 heading with some  backticks",
         ],
         "anchor": "a-level-4-heading",
         "content": "A level 4 heading",
@@ -124,7 +124,7 @@ Deno.test({
         "hierarchy": [
           "An Example Markdown File",
           "Another Level 2 heading",
-          "A Level 3 heading with some ",
+          "A Level 3 heading with some  backticks",
           "A level 4 heading",
         ],
         "anchor": "a-level-4-heading",

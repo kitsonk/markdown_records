@@ -59,10 +59,14 @@ fn parse_paragraph<'a>(
   node: &'a AstNode<'a>,
 ) {
   let mut content = Vec::<String>::new();
-  iter_nodes(node, &mut |child| {
-    if let NodeValue::Text(text) = &child.data.borrow().value {
+  iter_nodes(node, &mut |child| match &child.data.borrow().value {
+    NodeValue::Text(text) => {
       content.push(String::from_utf8(text.clone()).unwrap());
     }
+    NodeValue::Code(code) => {
+      content.push(String::from_utf8(code.literal.clone()).unwrap());
+    }
+    _ => (),
   });
   let content = content.join(" ");
   records.push(MarkdownRecord {
@@ -79,22 +83,30 @@ fn parse_header<'a>(
   mut records: RefMut<Vec<MarkdownRecord>>,
   node: &'a AstNode<'a>,
 ) {
+  let mut content = Vec::<String>::new();
   for child in node.children() {
-    if let NodeValue::Text(text) = &child.data.borrow().value {
-      let content = String::from_utf8(text.clone()).unwrap();
-      let hierarchy = state.stack.clone();
-      let anchor = Some(state.anchorizer.anchorize(content.clone()));
-      state.anchor = anchor.clone();
-      state.stack.push(content.clone());
-      records.push(MarkdownRecord {
-        content,
-        anchor,
-        hierarchy,
-        position: state.position,
-        kind: MarkdownRecordKind::Heading,
-      })
+    match &child.data.borrow().value {
+      NodeValue::Text(text) => {
+        content.push(String::from_utf8(text.clone()).unwrap());
+      }
+      NodeValue::Code(code) => {
+        content.push(String::from_utf8(code.literal.clone()).unwrap());
+      }
+      _ => (),
     }
   }
+  let content = content.join(" ");
+  let hierarchy = state.stack.clone();
+  let anchor = Some(state.anchorizer.anchorize(content.clone()));
+  state.anchor = anchor.clone();
+  state.stack.push(content.clone());
+  records.push(MarkdownRecord {
+    content,
+    anchor,
+    hierarchy,
+    position: state.position,
+    kind: MarkdownRecordKind::Heading,
+  });
 }
 
 fn parse(markdown: &str) -> Vec<MarkdownRecord> {
@@ -172,7 +184,7 @@ mod tests {
             "An Example Markdown File"
           ],
           "anchor": "an-example-markdown-file",
-          "content": "With some content here."
+          "content": "With some content here, including some  inline  code."
         },
         {
           "kind": "heading",
@@ -251,8 +263,8 @@ mod tests {
             "An Example Markdown File",
             "Another Level 2 heading"
           ],
-          "anchor": "a-level-3-heading-with-some-",
-          "content": "A Level 3 heading with some "
+          "anchor": "a-level-3-heading-with-some--backticks",
+          "content": "A Level 3 heading with some  backticks"
         },
         {
           "kind": "heading",
@@ -260,7 +272,7 @@ mod tests {
           "hierarchy": [
             "An Example Markdown File",
             "Another Level 2 heading",
-            "A Level 3 heading with some "
+            "A Level 3 heading with some  backticks"
           ],
           "anchor": "a-level-4-heading",
           "content": "A level 4 heading"
@@ -271,7 +283,7 @@ mod tests {
           "hierarchy": [
             "An Example Markdown File",
             "Another Level 2 heading",
-            "A Level 3 heading with some ",
+            "A Level 3 heading with some  backticks",
             "A level 4 heading"
           ],
           "anchor": "a-level-4-heading",

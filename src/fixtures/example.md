@@ -1,6 +1,6 @@
 # An Example Markdown File
 
-With some content here.
+With some content here, including some `inline` code.
 
 ## A Heading at Level 2
 

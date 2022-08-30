@@ -1,6 +1,6 @@
 [package]
 name = "markdown_records"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "Wasm bindings to generate algolia search records from markdown"
 authors = ["Kitson P. Kelly"]
